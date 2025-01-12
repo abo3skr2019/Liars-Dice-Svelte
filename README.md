@@ -39,7 +39,10 @@ A peer-to-peer online implementation of the classic bluffing dice game "Liar's D
    - The game will automatically determine the winner
 
 ## Development
-
+### Todo
+- Multiplayer Support instead of just duels 
+- Speedup new Round 
+- 3d Dice (Maybe)
 ### Prerequisites
 - Node.js
 - npm or yarn
