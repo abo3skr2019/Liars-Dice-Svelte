@@ -164,7 +164,7 @@
     });
   </script>
   
-  <main class="container mx-auto p-4">
+  <main class="container mx-auto p-4 relative">
     <h1 class="text-3xl font-bold mb-4">Liar's Dice</h1>
   
     {#if gameState === 'lobby'}
@@ -234,14 +234,6 @@
   
           <p class="text-lg font-semibold">{message}</p>
   
-          {#if gameState === 'gameover'}
-            <button
-              on:click={playAgain}
-              class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded mt-4 transition duration-200"
-            >
-              Play Again
-            </button>
-          {/if}
         </div>
   
         <div>
@@ -267,27 +259,27 @@
         </div>
       </div>
     {/if}
-    
-    {#if gameState === 'gameover'}
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div class="bg-white p-8 rounded-lg shadow-lg text-center">
-                <h2 class="text-2xl font-bold mb-4">{gameOverMessage}</h2>
-                <p class="mb-4">
-                    Final Score:<br>
-                    {playerName}: {diceCount} dice<br>
-                    {opponentName}: {opponentDiceCount} dice
-                </p>
-                <button
-                    on:click={playAgain}
-                    class="bg-blue-500 hover:bg-blue-600 text-white p-2 px-6 rounded transition duration-200"
-                >
-                    Play Again
-                </button>
-            </div>
-        </div>
-    {/if}
   </main>
   
+  {#if gameState === 'gameover'}
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4">{gameOverMessage}</h2>
+            <p class="mb-4">
+                Final Score:<br>
+                {playerName}: {diceCount} dice<br>
+                {opponentName}: {opponentDiceCount} dice
+            </p>
+            <button
+                on:click={playAgain}
+                class="bg-blue-500 hover:bg-blue-600 text-white p-2 px-6 rounded transition duration-200"
+            >
+                Play Again
+            </button>
+        </div>
+    </div>
+  {/if}
+
   <style>
     :global(body) {
       background-color: #f0f4f8;
@@ -323,5 +315,41 @@
     
     .bg-opacity-50 {
         backdrop-filter: blur(2px);
+    }
+
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        backdrop-filter: blur(2px);
+    }
+
+    .modal-content {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 90%;
+        width: 400px;
+        text-align: center;
+        animation: modal-pop 0.3s ease-out;
+    }
+
+    @keyframes modal-pop {
+        from {
+            transform: scale(0.8);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
     }
   </style>
