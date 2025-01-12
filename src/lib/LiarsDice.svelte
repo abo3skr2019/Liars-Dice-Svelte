@@ -16,7 +16,7 @@
     let dice = [];
     let diceCount = 5;
     let opponentDiceCount = 5;
-    let bid = { quantity: 0, value: 0 };
+    let bid = { quantity: null, value: null };
     let gameState = 'lobby';
     let message = '';
     let isMyTurn = false;
@@ -238,7 +238,6 @@
       rollDice();
       bid = { quantity: 0, value: 0 };
       message = 'New game started!';
-      isMyTurn = true;
       chatMessages = [];
     }
   
