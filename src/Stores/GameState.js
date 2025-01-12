@@ -6,6 +6,9 @@ export const gameState = writable({
   dice: [],
   bids: [],
   gameStarted: false,
+  round: 1,
+  currentBid: null,
+  playerTurn: 0,
 });
 
 /**
@@ -15,4 +18,7 @@ export const gameState = writable({
  * @property {Array} dice
  * @property {Array} bids
  * @property {boolean} gameStarted
+ * @property {number} round
+ * @property {any} currentBid
+ * @property {number} playerTurn
  */

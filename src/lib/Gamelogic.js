@@ -63,3 +63,25 @@ function isValidGameState(data) {
     typeof data.gameStarted === 'boolean'
   );
 }
+
+/**
+ * Handle a player's bid.
+ * @param {GameState} state
+ * @param {Object} bid
+ * @param {number} bid.quantity
+ * @param {number} bid.face
+ */
+export function handleBid(state, bid) {
+  state.currentBid = bid;
+  state.playerTurn = (state.playerTurn + 1) % state.players.length;
+  updateGameState(state);
+}
+
+/**
+ * Handle calling a bluff.
+ * @param {GameState} state
+ */
+export function handleCallBluff(state) {
+  // Implement bluff calling logic here
+  updateGameState(state);
+}
