@@ -116,7 +116,7 @@
             resetGame();
             break;
           case 'surrender':
-            gameOverMessage = 'Game Over! You win by surrender!';
+            gameOverMessage = 'You Win by Surrender!';
             gameState = 'gameover';
             break;
         }
@@ -208,11 +208,10 @@
       if (diceCount === 0 || opponentDiceCount === 0) {
           const winner = diceCount === 0 ? opponentName : playerName;
           if (winner === playerName) {
-              gameOverMessage = `Game Over! You win!`;
+              gameOverMessage = `Congratulations You win!`;
           } else {
-              gameOverMessage = `Game Over! ${winner} wins!`;
+              gameOverMessage = `You lose!`;
           }
-          gameOverMessage = `Game Over! ${winner} wins!`;
           gameState = 'gameover';
       } else {
           // Continue game with new round
@@ -269,7 +268,7 @@
     function surrender() {
       if (confirm('Are you sure you want to surrender?')) {
         connection.send({ type: 'surrender' });
-        gameOverMessage = `Game Over! ${opponentName} wins by surrender!`;
+        gameOverMessage = `you Concede!`;
         gameState = 'gameover';
       }
     }
