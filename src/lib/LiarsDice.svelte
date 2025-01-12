@@ -29,8 +29,25 @@
         alert('Please enter your name before connecting.');
         return;
       }
-      connection = peer.connect(connectId);
-      setupConnection();
+      try {
+        connection = peer.connect(connectId);
+        connection.on('error', (err) => {
+          alert('Connection error: ' + err);
+          gameState = 'lobby';
+        });
+        
+        // Add timeout to handle cases where peer doesn't exist
+        setTimeout(() => {
+          if (connection.open === false) {
+            alert('Could not connect to peer. Please check the Peer ID.');
+            connection.close();
+          }
+        }, 5000);
+        
+        setupConnection();
+      } catch (err) {
+        alert('Failed to connect: ' + err.message);
+      }
     }
   
     function setupConnection() {
@@ -41,6 +58,12 @@
       connection.on('data', (data) => {
         switch (data.type) {
           case 'playerInfo':
+            if (!data.name) {
+              alert('Opponent has not set their name!');
+              connection.close();
+              gameState = 'lobby';
+              return;
+            }
             opponentName = data.name;
             startGame();
             break;
@@ -63,6 +86,12 @@
     }
   
     function startGame() {
+      if (!playerName || !opponentName) {
+        alert('Both players must set their names before starting the game.');
+        connection.close();
+        gameState = 'lobby';
+        return;
+      }
       gameState = 'playing';
       rollDice();
       isMyTurn = true;
@@ -70,14 +99,20 @@
     }
   
     function makeBid() {
-      if (bid.quantity > 0 && bid.value > 0) {
-        connection.send({ type: 'bid', bid });
-        isMyTurn = false;
-        message = `You bid ${bid.quantity} x ${bid.value}'s. Waiting for ${opponentName}'s move.`;
+      if (!bid.quantity || !bid.value || bid.quantity < 1 || bid.value < 1 || bid.value > 6) {
+        alert('Invalid bid! Quantity must be positive and value must be between 1 and 6.');
+        return;
       }
+      connection.send({ type: 'bid', bid });
+      isMyTurn = false;
+      message = `You bid ${bid.quantity} x ${bid.value}'s. Waiting for ${opponentName}'s move.`;
     }
   
     function challenge() {
+      if (!bid.quantity || !bid.value) {
+        alert('Cannot challenge when there is no bid!');
+        return;
+      }
       connection.send({ type: 'challenge', challengerDice: dice });
       handleChallenge(dice);
     }
@@ -109,6 +144,11 @@
   
       if (diceCount === 0 || opponentDiceCount === 0) {
           const winner = diceCount === 0 ? opponentName : playerName;
+          if (winner === playerName) {
+              gameOverMessage = `Game Over! You win!`;
+          } else {
+              gameOverMessage = `Game Over! ${winner} wins!`;
+          }
           gameOverMessage = `Game Over! ${winner} wins!`;
           gameState = 'gameover';
       } else {
@@ -144,10 +184,19 @@
   
     function sendChatMessage() {
       if (chatInput.trim()) {
-        const newMessage = { sender: playerName, message: chatInput.trim() };
+        const newMessage = { sender: 'You', message: chatInput.trim() };
         chatMessages = [...chatMessages, newMessage];
         connection.send({ type: 'chat', message: chatInput.trim() });
         chatInput = '';
+      }
+    }
+  
+    function validateBidValue(event) {
+      const value = parseInt(event.target.value);
+      if (value > 6) {
+        bid.value = 6;
+      } else if (value < 1) {
+        bid.value = 1;
       }
     }
   
@@ -207,28 +256,38 @@
           <p class="text-lg mb-4">{bid.quantity} x {bid.value}'s</p>
   
           {#if gameState === 'playing' && isMyTurn}
-            <div class="mb-4">
-              <input
-                type="number"
-                bind:value={bid.quantity}
-                min="1"
-                class="border p-2 mr-2 rounded w-32"
-                placeholder="Number of dice"
-              />
-              <input
-                type="number"
-                bind:value={bid.value}
-                min="1"
-                max="6"
-                class="border p-2 mr-2 rounded w-32"
-                placeholder="Dice face (1-6)"
-              />
-              <button on:click={makeBid} class="bg-green-500 hover:bg-green-600 text-white p-2 rounded mr-2 transition duration-200">
-                Make Bid
-              </button>
-              <button on:click={challenge} class="bg-red-500 hover:bg-red-600 text-white p-2 rounded transition duration-200">
-                Challenge
-              </button>
+            <div class="mb-4 justify-center">
+              <div class="flex mb-2">
+                <input
+                  type="number"
+                  min="1"
+                  class="border p-2 mr-2 rounded w-40"
+                  placeholder="Number of dice"
+                />
+                <input
+                  type="number"
+                  min="1"
+                  max="6"
+                  on:change={validateBidValue}
+                  class="border p-2 mr-2 rounded w-40"
+                  placeholder="Dice face"
+                />
+              </div>
+              <div class="flex justify-center">
+                <button 
+                  on:click={makeBid} 
+                  class="bg-green-500 hover:bg-green-600 text-white p-2 rounded mr-4 transition duration-200"
+                >
+                  Make Bid
+                </button>
+                <button 
+                  on:click={challenge} 
+                  class="bg-red-500 hover:bg-red-600 text-white p-2 rounded mr-4  transition duration-200 {!bid.quantity || !bid.value ? 'opacity-50 cursor-not-allowed' : ''}"
+                  disabled={!bid.quantity || !bid.value}
+                >
+                  Challenge
+                </button>
+              </div>
             </div>
           {/if}
   
@@ -267,7 +326,7 @@
             <h2 class="text-2xl font-bold mb-4">{gameOverMessage}</h2>
             <p class="mb-4">
                 Final Score:<br>
-                {playerName}: {diceCount} dice<br>
+                You: {diceCount} dice<br>
                 {opponentName}: {opponentDiceCount} dice
             </p>
             <button
@@ -309,13 +368,7 @@
       gap: 1rem;
     }
     
-    .fixed {
-        z-index: 1000;
-    }
-    
-    .bg-opacity-50 {
-        backdrop-filter: blur(2px);
-    }
+
 
     .modal-overlay {
         position: fixed;
