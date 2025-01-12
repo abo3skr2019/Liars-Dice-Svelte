@@ -24,16 +24,30 @@
     let chatInput = '';
     let gameOverMessage = '';
     let isHost = false;
+    let implicitName = '';
+    let implicitOpponentName = '';  // New variable for opponent's implicit name
+
+    function extractNameFromPeerId(id) {
+      const firstPart = id.split('-')[0];
+      return firstPart.charAt(0).toUpperCase() + firstPart.slice(1);
+    }
   
     function rollDice() {
       dice = Array.from({ length: diceCount }, () => Math.floor(Math.random() * 6) + 1);
     }
   
     function connectToPeer() {
-      if (!playerName) {
-        alert('Please enter your name before connecting.');
+      // Use implicit name if no explicit name is provided
+      if (!playerName && connectId) {
+        implicitOpponentName = extractNameFromPeerId(peerId); // Use our ID for our name
+        implicitName = extractNameFromPeerId(connectId); // Use target ID for opponent name
+      }
+      
+      if (!playerName && !implicitOpponentName) {
+        alert('Unable to extract name from Connection Code.');
         return;
       }
+      
       try {
         connection = peer.connect(connectId);
         isHost = false;  // Client connecting to host
@@ -45,7 +59,7 @@
         // Add timeout to handle cases where peer doesn't exist
         setTimeout(() => {
           if (connection.open === false) {
-            alert('Could not connect to peer. Please check the Peer ID.');
+            alert('Could not connect to peer. Please check the Connection Code.');
             connection.close();
           }
         }, 5000);
@@ -59,7 +73,20 @@
     function setupConnection(conn) {
       connection = conn;
       connection.on('open', () => {
-        connection.send({ type: 'playerInfo', name: playerName });
+        if (isHost) {
+          // If we're the host, use our peer ID for name
+          implicitName = extractNameFromPeerId(peerId);
+        } else {
+          // If we're the client, use what we set in connectToPeer
+          implicitName = implicitOpponentName;
+        }
+        
+        // Send either explicit or implicit name
+        playerName = playerName || implicitName;
+        connection.send({ 
+          type: 'playerInfo', 
+          name: playerName
+        });
       });
   
       connection.on('data', (data) => {
@@ -105,6 +132,7 @@
       // Handle incoming connections
       peer.on('connection', (conn) => {
         isHost = true;  // We are the host
+        implicitName = extractNameFromPeerId(peerId); // Host uses their own ID for name
         setupConnection(conn);
       });
     });
@@ -255,14 +283,14 @@
         <input
           type="text"
           bind:value={playerName}
-          placeholder="Enter your name"
+          placeholder="Enter name (optional)"
           class="border p-2 mr-2 rounded"
         />
-        <p class="my-2">Your Peer ID: <span class="font-mono bg-gray-100 p-1 rounded">{peerId}</span></p>
+        <p class="my-2">Your Connection Code: <span class="font-mono bg-gray-100 p-1 rounded">{peerId}</span></p>
         <input
           type="text"
           bind:value={connectId}
-          placeholder="Enter peer ID to connect"
+          placeholder="Enter Connection Code to connect"
           class="border p-2 mr-2 rounded"
         />
         <button on:click={connectToPeer} class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition duration-200">
