@@ -233,13 +233,7 @@
   
     function resetRound() {
       rollDice();
-      // Increment the previous bid quantity by 1 instead of resetting
-      if (bid.quantity !== null && bid.value !== null) {
-        bid.quantity = bid.quantity + 1;
-      } else {
-        // Only for the first round when there's no previous bid
-        bid = { quantity: 0, value: 0 };
-      }
+      bid = { quantity: null, value: null };
       // After first round, alternate turns normally
       isMyTurn = !isMyTurn;
       message = isMyTurn 
@@ -304,6 +298,7 @@
         gameState = 'lobby';
         opponentName = '';
         connectId = '';
+        bid = { quantity: null, value: null };
         isReturningToLobby = false;
     }
   </script>
