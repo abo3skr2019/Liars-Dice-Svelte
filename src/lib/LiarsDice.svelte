@@ -26,6 +26,7 @@
     let isHost = false;
     let implicitName = '';
     let implicitOpponentName = '';  // New variable for opponent's implicit name
+    let isReturningToLobby = false; // Add this at the top with other state variables
 
     function extractNameFromPeerId(id) {
       const firstPart = id.split('-')[0];
@@ -55,14 +56,6 @@
           alert('Connection error: ' + err);
           gameState = 'lobby';
         });
-        
-        // Add timeout to handle cases where peer doesn't exist
-        setTimeout(() => {
-          if (connection.open === false) {
-            alert('Could not connect to peer. Please check the Connection Code.');
-            connection.close();
-          }
-        }, 5000);
         
         setupConnection(connection);
       } catch (err) {
@@ -112,22 +105,39 @@
           case 'chat':
             chatMessages = [...chatMessages, { sender: opponentName, message: data.message }];
             break;
-          case 'playAgain':
+          case 'rematch':
             resetGame();
             break;
           case 'surrender':
             gameOverMessage = 'You Win by Surrender!';
             gameState = 'gameover';
             break;
+          case 'returnToLobby':
+            if (!isReturningToLobby) {
+              returnToLobby(false);
+            }
+            break;
+        }
+      });
+
+      // Simplified connection close handler
+      connection.on('close', () => {
+        if (gameState !== 'lobby' && !isReturningToLobby) {
+          returnToLobby(false);
         }
       });
     }
 
     onMount(() => {
+      try{
       peer = new Peer();
       peer.on('open', (id) => {
         peerId = id;
       });
+    }
+    catch(err){
+      console.log(err);
+    }
 
       // Handle incoming connections
       peer.on('connection', (conn) => {
@@ -223,7 +233,13 @@
   
     function resetRound() {
       rollDice();
-      bid = { quantity: 0, value: 0 };
+      // Increment the previous bid quantity by 1 instead of resetting
+      if (bid.quantity !== null && bid.value !== null) {
+        bid.quantity = bid.quantity + 1;
+      } else {
+        // Only for the first round when there's no previous bid
+        bid = { quantity: 0, value: 0 };
+      }
       // After first round, alternate turns normally
       isMyTurn = !isMyTurn;
       message = isMyTurn 
@@ -236,14 +252,14 @@
       opponentDiceCount = 5;
       gameState = 'playing';
       rollDice();
-      bid = { quantity: 0, value: 0 };
+      bid = { quantity: null, value: null };
       message = 'New game started!';
       chatMessages = [];
     }
   
-    function playAgain() {
+    function rematch() {
       resetGame();
-      connection.send({ type: 'playAgain' });
+      connection.send({ type: 'rematch' });
     }
   
     function sendChatMessage() {
@@ -271,6 +287,25 @@
         gameState = 'gameover';
       }
     }
+
+    function returnToLobby(initiatedByUser = true) {
+        isReturningToLobby = initiatedByUser;
+        
+        if (connection && connection.open) {
+            if (initiatedByUser) {
+                connection.send({ type: 'returnToLobby' });
+                connection.close();
+            }
+        }
+        cleanupAndReturnToLobby();
+    }
+
+    function cleanupAndReturnToLobby() {
+        gameState = 'lobby';
+        opponentName = '';
+        connectId = '';
+        isReturningToLobby = false;
+    }
   </script>
   
   <main class="container mx-auto p-4 relative">
@@ -284,7 +319,7 @@
           placeholder="Enter name (optional)"
           class="border p-2 mr-2 rounded"
         />
-        <p class="my-2">Your Connection Code: <span class="font-mono bg-gray-100 p-1 rounded">{peerId}</span></p>
+        <p class="my-2">Your Connection Code: <span class="font-mono bg-gray-700 text-gray-100 p-1 rounded">{peerId}</span></p>
         <input
           type="text"
           bind:value={connectId}
@@ -322,15 +357,12 @@
   </main>
   
   {#if gameState === 'gameover'}
-  <GameOverModal {gameOverMessage} {diceCount} {opponentName} {opponentDiceCount} {playAgain} />
+  <GameOverModal {gameOverMessage} {diceCount} {opponentName} {opponentDiceCount} {rematch} {returnToLobby} />
   {/if}
 
   <style>
     :global(body) {
-      background-color: #f0f4f8;
+        background-color: #1a1f2e;
+        color: #e2e8f0;
     }
-        
-
-
-
   </style>
