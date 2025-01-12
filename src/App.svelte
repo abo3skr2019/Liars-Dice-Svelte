@@ -3,6 +3,7 @@
   import viteLogo from '/vite.svg'
   import Counter from './lib/Counter.svelte'
   import Dice from './lib/Dice.svelte';
+  import LiarsDice from './lib/LiarsDice.svelte';
 </script>
 
 <main>
@@ -29,6 +30,9 @@
   <p class="read-the-docs">
     Click on the Vite and Svelte logos to learn more
   </p>
+  <div class="card">
+    <LiarsDice />
+  </div>
 </main>
 
 <style>
