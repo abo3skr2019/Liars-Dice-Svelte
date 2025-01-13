@@ -33,7 +33,7 @@
     let isHost = false;
     let implicitName = '';
     let implicitOpponentName = '';  // New variable for opponent's implicit name
-    let isReturningToLobby = false; // Add this at the top with other state variables
+    let isReturningToLobby = false; 
     let showCopied = false;
     let showQRCode = false;
     let roundTransitionActive = false;
