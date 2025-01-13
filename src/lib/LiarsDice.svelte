@@ -7,7 +7,13 @@
     import GameOverModal from './GameOverModal.svelte';
     import BidControls from './BidControls.svelte';
     import QRModal from './QRModal.svelte';
+    import { fade } from 'svelte/transition';
   
+    // Simplified animation config
+    const ANIMATION_CONFIG = {
+        delayBetweenRounds: 2000, // ms to wait before next round
+    };
+    
     let peer;
     let connection;
     let peerId = '';
@@ -30,6 +36,7 @@
     let isReturningToLobby = false; // Add this at the top with other state variables
     let showCopied = false;
     let showQRCode = false;
+    let roundTransitionActive = false;
 
     function extractNameFromPeerId(id) {
       const firstPart = id.split('-')[0];
@@ -246,21 +253,28 @@
           }
           gameState = 'gameover';
       } else {
-          // Continue game with new round
-          setTimeout(() => {
-              resetRound();
-          }, 2000);
+          startRoundTransition();
       }
     }
   
-    function resetRound() {
-      rollDice();
-      bid = { quantity: null, value: null };
-      // After first round, alternate turns normally
-      isMyTurn = !isMyTurn;
-      message = isMyTurn 
-        ? "New round started! It's your turn to make a bid."
-        : `New round started! Waiting for ${opponentName}'s bid.`;
+    function startRoundTransition() {
+        roundTransitionActive = true;
+        
+        setTimeout(() => {
+            roundTransitionActive = false;
+            resetRound();
+        }, ANIMATION_CONFIG.delayBetweenRounds);
+    }
+
+    function resetRound(shouldRollDice = true) {
+        if (shouldRollDice) {
+            rollDice();
+        }
+        bid = { quantity: null, value: null };
+        isMyTurn = !isMyTurn;
+        message = isMyTurn 
+            ? "New round started! It's your turn to make a bid."
+            : `New round started! Waiting for ${opponentName}'s bid.`;
     }
   
     function resetGame() {
@@ -389,7 +403,7 @@
       </div>
     {:else if gameState === 'playing' || gameState === 'gameover'}
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div class="space-y-4">
+        <div class="space-y-4" class:transitioning={roundTransitionActive}>
           <DiceTray {dice} {diceCount} label="Your Dice" />  
           <h2 class="text-lg sm:text-xl font-bold mb-2">Current Bid:</h2>
           <p class="text-base sm:text-lg mb-4">{bid.quantity} x {bid.value}'s</p>
@@ -468,5 +482,19 @@
         padding-left: 1rem;
         padding-right: 1rem;
       }
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+    
+    :global(.round-transition) {
+        animation: pulse 1s ease-in-out infinite;
+    }
+
+    .transitioning {
+        opacity: 0.6;
+        transition: opacity 0.3s ease;
     }
   </style>
