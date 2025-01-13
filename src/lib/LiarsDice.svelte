@@ -11,7 +11,7 @@
   
     // Simplified animation config
     const ANIMATION_CONFIG = {
-        delayBetweenRounds: 2000, // ms to wait before next round
+        delayBetweenRounds: 800, // ms to wait before next round
     };
     
     let peer;
