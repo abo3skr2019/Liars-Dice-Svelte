@@ -27,6 +27,7 @@
     let implicitName = '';
     let implicitOpponentName = '';  // New variable for opponent's implicit name
     let isReturningToLobby = false; // Add this at the top with other state variables
+    let showCopied = false;
 
     function extractNameFromPeerId(id) {
       const firstPart = id.split('-')[0];
@@ -301,6 +302,21 @@
         bid = { quantity: null, value: null };
         isReturningToLobby = false;
     }
+
+    async function copyToClipboard(text) {
+        try {
+            await navigator.clipboard.writeText(text);
+            const element = document.getElementById('peerId');
+            element.classList.add('copied');
+            showCopied = true;
+            setTimeout(() => {
+                element.classList.remove('copied');
+                showCopied = false;
+            }, 1000);
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+        }
+    }
   </script>
   
   <main class="container mx-auto p-4 relative">
@@ -314,7 +330,21 @@
           placeholder="Enter name (optional)"
           class="border p-2 mr-2 rounded"
         />
-        <p class="my-2">Your Connection Code: <span class="font-mono bg-gray-700 text-gray-100 p-1 rounded">{peerId}</span></p>
+        <p class="my-2">Your Connection Code: 
+            <span 
+                id="peerId"
+                class="font-mono bg-gray-700 text-gray-100 p-1 rounded cursor-pointer hover:bg-gray-600 transition-colors duration-200 relative"
+                role="button"
+                tabindex="0"
+                on:click={() => copyToClipboard(peerId)}
+                on:keydown={(e) => e.key === 'Enter' && copyToClipboard(peerId)}
+            >
+                {peerId}
+                {#if showCopied}
+                    <span class="copied-indicator">Copied!</span>
+                {/if}
+            </span>
+        </p>
         <input
           type="text"
           bind:value={connectId}
@@ -359,5 +389,36 @@
     :global(body) {
         background-color: #1a1f2e;
         color: #e2e8f0;
+    }
+
+    .copied-indicator {
+        position: absolute;
+        top: -20px;
+        right: 0;
+        background-color: #4a5568;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        animation: fadeInOut 1s ease-in-out;
+        white-space: nowrap;
+    }
+
+    @keyframes fadeInOut {
+        0% {
+            opacity: 0;
+            transform: translateY(5px);
+        }
+        20% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        80% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
     }
   </style>
