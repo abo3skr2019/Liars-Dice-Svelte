@@ -1,4 +1,5 @@
 <script>
+    import { fade, scale } from 'svelte/transition';
     export let gameOverMessage;
     export let diceCount;
     export let opponentName;
@@ -7,8 +8,8 @@
     export let returnToLobby;
 </script>
 
-<div class="modal-overlay">
-    <div class="modal-content">
+<div class="modal-overlay" transition:fade={{duration: 200}}>
+    <div class="modal-content" transition:scale={{duration: 200, start: 0.95}}>
         <h2 class="text-2xl font-bold mb-4">{gameOverMessage}</h2>
         <p class="mb-4">
             Final Score:<br>
@@ -56,17 +57,6 @@
         max-width: 90%;
         width: 400px;
         text-align: center;
-        animation: modal-pop 0.3s ease-out;
         border: 1px solid #4a5568;
-    }
-    @keyframes modal-pop {
-        from {
-            transform: scale(0.8);
-            opacity: 0;
-        }
-        to {
-            transform: scale(1);
-            opacity: 1;
-        }
     }
 </style>

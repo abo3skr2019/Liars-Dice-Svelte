@@ -20,18 +20,26 @@
 
 <style>
     .dice {
-        font-size: 2rem;
+        font-size: 1.5rem;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 3rem;
-        height: 3rem;
+        width: 2.5rem;
+        height: 2.5rem;
         background-color: #2d3748;
         color: #e2e8f0;
         border-radius: 0.5rem;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         transition: all 0.2s;
+    }
+    
+    @media (min-width: 640px) {
+        .dice {
+            font-size: 2rem;
+            width: 3rem;
+            height: 3rem;
+        }
     }
     
     .dice:hover {

@@ -2,10 +2,11 @@
     import { onMount } from 'svelte';
     import Peer from 'peerjs';
     import '@fortawesome/fontawesome-free/css/all.css';
-  import Chat from './Chat.svelte';
-  import DiceTray from './DiceTray.svelte';
-  import GameOverModal from './GameOverModal.svelte';
-  import BidControls from './BidControls.svelte';
+    import Chat from './Chat.svelte';
+    import DiceTray from './DiceTray.svelte';
+    import GameOverModal from './GameOverModal.svelte';
+    import BidControls from './BidControls.svelte';
+    import QRModal from './QRModal.svelte';
   
     let peer;
     let connection;
@@ -28,6 +29,7 @@
     let implicitOpponentName = '';  // New variable for opponent's implicit name
     let isReturningToLobby = false; // Add this at the top with other state variables
     let showCopied = false;
+    let showQRCode = false;
 
     function extractNameFromPeerId(id) {
       const firstPart = id.split('-')[0];
@@ -67,6 +69,9 @@
     function setupConnection(conn) {
       connection = conn;
       connection.on('open', () => {
+        // Hide QR code modal if it's open
+        showQRCode = false;
+
         if (isHost) {
           // If we're the host, use our peer ID for name
           implicitName = extractNameFromPeerId(peerId);
@@ -129,11 +134,27 @@
       });
     }
 
+    function checkUrlForConnection() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const connectToPeerId = urlParams.get('connect');
+        
+        if (connectToPeerId) {
+            // Clear the URL parameter without refreshing the page
+            window.history.replaceState({}, '', window.location.pathname);
+            // Set the connection ID and connect
+            connectId = connectToPeerId;
+            setTimeout(() => {
+                connectToPeer();
+            }, 1000); // Small delay to ensure peer is initialized
+        }
+    }
+
     onMount(() => {
       try{
       peer = new Peer();
       peer.on('open', (id) => {
         peerId = id;
+        checkUrlForConnection(); // Check for connection params after peer is initialized
       });
     }
     catch(err){
@@ -317,20 +338,24 @@
             console.error('Failed to copy text: ', err);
         }
     }
+
+    function toggleQRCode() {
+        showQRCode = !showQRCode;
+    }
   </script>
   
-  <main class="container mx-auto p-4 relative">
-    <h1 class="text-3xl font-bold mb-4">Liar's Dice</h1>
+  <main class="container mx-auto p-2 sm:p-4 relative max-w-4xl">
+    <h1 class="text-2xl sm:text-3xl font-bold mb-4">Liar's Dice</h1>
   
     {#if gameState === 'lobby'}
-      <div class="mb-4">
+      <div class="mb-4 space-y-3">
         <input
           type="text"
           bind:value={playerName}
           placeholder="Enter name (optional)"
-          class="border p-2 mr-2 rounded"
+          class="w-full sm:w-auto border p-2 mr-2 rounded"
         />
-        <p class="my-2">Your Connection Code: 
+        <p class="my-2 text-sm sm:text-base">Your Connection Code: 
             <span 
                 id="peerId"
                 class="font-mono bg-gray-700 text-gray-100 p-1 rounded cursor-pointer hover:bg-gray-600 transition-colors duration-200 relative"
@@ -344,37 +369,44 @@
                     <span class="copied-indicator">Copied!</span>
                 {/if}
             </span>
+            <button
+                class="ml-2 text-sm bg-gray-700 hover:bg-gray-600 p-1 rounded"
+                on:click={toggleQRCode}
+                aria-label="Show QR Code"
+            >
+                <i class="fas fa-qrcode"></i>
+            </button>
         </p>
         <input
           type="text"
           bind:value={connectId}
           placeholder="Enter Connection Code to connect"
-          class="border p-2 mr-2 rounded"
+          class="w-full sm:w-auto border p-2 mr-2 rounded"
         />
-        <button on:click={connectToPeer} class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition duration-200">
+        <button on:click={connectToPeer} class="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition duration-200">
           Connect to Opponent
         </button>
       </div>
     {:else if gameState === 'playing' || gameState === 'gameover'}
-      <div class="grid grid-cols-2 gap-4">
-        <div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="space-y-4">
           <DiceTray {dice} {diceCount} label="Your Dice" />  
-          <h2 class="text-xl font-bold mb-2">Current Bid:</h2>
-          <p class="text-lg mb-4">{bid.quantity} x {bid.value}'s</p>
+          <h2 class="text-lg sm:text-xl font-bold mb-2">Current Bid:</h2>
+          <p class="text-base sm:text-lg mb-4">{bid.quantity} x {bid.value}'s</p>
   
           {#if gameState === 'playing'}
-            <div class="mb-4 text-lg font-bold {isMyTurn ? 'text-green-600' : 'text-red-600'}">
+            <div class="mb-4 text-base sm:text-lg font-bold {isMyTurn ? 'text-green-600' : 'text-red-600'}">
               {isMyTurn ? "It's your turn!" : `Waiting for ${opponentName}'s move...`}
             </div>
             <BidControls bind:bid {makeBid} {challenge} {validateBidValue} />
           {/if}
   
-          <p class="text-lg font-semibold">{message}</p>
+          <p class="text-base sm:text-lg font-semibold">{message}</p>
   
         </div>
   
         <div>
-          <h2 class="text-xl font-bold mb-2 text-center">Opponent's Dice: {opponentDiceCount}</h2>
+          <h2 class="text-lg sm:text-xl font-bold mb-2 text-center">Opponent's Dice: {opponentDiceCount}</h2>
           <Chat {chatMessages} {chatInput} {sendChatMessage} {surrender} />
         </div>
       </div>
@@ -383,6 +415,10 @@
   
   {#if gameState === 'gameover'}
   <GameOverModal {gameOverMessage} {diceCount} {opponentName} {opponentDiceCount} {rematch} {returnToLobby} />
+  {/if}
+
+  {#if showQRCode}
+    <QRModal {peerId} closeModal={toggleQRCode} />
   {/if}
 
   <style>
@@ -420,5 +456,17 @@
             opacity: 0;
             transform: translateY(-5px);
         }
+    }
+
+    @media (max-width: 640px) {
+      :global(input[type="number"]) {
+        font-size: 16px; /* Prevents iOS zoom on focus */
+      }
+      
+      :global(.container) {
+        width: 100%;
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
     }
   </style>
