@@ -40,11 +40,12 @@ A peer-to-peer online implementation of the classic bluffing dice game "Liar's D
 
 ## Development
 ### Todo
-- add a max to the quantity to be the sum of mydice+opponentdice
-- Multiplayer Support instead of just duels 
-- QR Code input for connection codes 
-- Speedup new Round 
-- 3d Dice (Maybe)
+- [ ] add a max to the quantity to be the sum of mydice+opponentdice
+- [ ] Multiplayer Support instead of just duels 
+- [x] QR Code input for connection codes 
+- [ ] Speedup new Round 
+- [x] 3d Dice (Maybe)
+  - Well We made better dice so i'll mark this for now 
 ### Prerequisites
 - Node.js
 - npm or yarn
