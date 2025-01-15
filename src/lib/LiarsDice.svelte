@@ -443,7 +443,14 @@
             <div class="mb-4 text-base sm:text-lg font-bold {isMyTurn ? 'text-green-600' : 'text-red-600'}">
               {isMyTurn ? "It's your turn!" : `Waiting for ${opponentName}'s move...`}
             </div>
-            <BidControls bind:bid {makeBid} {challenge} {validateBidValue} />
+            <BidControls 
+              bind:bid 
+              {makeBid} 
+              {challenge} 
+              {validateBidValue} 
+              {diceCount}
+              {opponentDiceCount}
+            />
           {/if}
   
           <p class="text-base sm:text-lg font-semibold">{message}</p>
