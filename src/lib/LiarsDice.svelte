@@ -455,7 +455,12 @@
   
         <div>
           <h2 class="text-lg sm:text-xl font-bold mb-2 text-center">Opponent's Dice: {opponentDiceCount}</h2>
-          <Chat {chatMessages} {chatInput} {sendChatMessage} {surrender} />
+          <Chat 
+            {chatMessages} 
+            bind:chatInput 
+            {sendChatMessage} 
+            {surrender} 
+          />
         </div>
       </div>
     {/if}

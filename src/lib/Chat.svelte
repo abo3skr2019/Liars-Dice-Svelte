@@ -6,6 +6,13 @@
 
     function handleKeypress(event) {
         if (event.key === 'Enter' && chatInput.trim().length > 0) {
+            event.preventDefault();
+            sendChatMessage();
+        }
+    }
+
+    function handleSendClick() {
+        if (chatInput.trim().length > 0) {
             sendChatMessage();
         }
     }
@@ -26,7 +33,7 @@
         on:keypress={handleKeypress}
     />
     <button 
-        on:click={sendChatMessage}
+        on:click={handleSendClick}
         disabled={!chatInput.trim()}
         class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
     >
