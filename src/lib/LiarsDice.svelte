@@ -116,6 +116,7 @@
             handleChallenge(data.challengerDice);
             break;
           case 'chat':
+            console.log()
             chatMessages = [...chatMessages, { sender: opponentName, message: data.message }];
             break;
           case 'rematch':
@@ -293,11 +294,20 @@
     }
   
     function sendChatMessage() {
-      if (chatInput.trim()) {
-        const newMessage = { sender: 'You', message: chatInput.trim() };
-        chatMessages = [...chatMessages, newMessage];
-        connection.send({ type: 'chat', message: chatInput.trim() });
-        chatInput = '';
+      console.log('Chat input value:', chatInput); // Debug log
+      if (!connection) {
+          console.log('No connection available');
+          return;
+      }
+      
+      if (chatInput && chatInput.trim().length > 0) {
+          console.log("Sending message:", chatInput.trim());
+          const newMessage = { sender: 'You', message: chatInput.trim() };
+          chatMessages = [...chatMessages, newMessage];
+          connection.send({ type: 'chat', message: chatInput.trim() });
+          chatInput = '';
+      } else {
+          console.log('Empty message, not sending');
       }
     }
   
@@ -339,19 +349,43 @@
     }
 
     async function copyToClipboard(text) {
-        try {
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            // Modern approach
             await navigator.clipboard.writeText(text);
-            const element = document.getElementById('peerId');
-            element.classList.add('copied');
-            showCopied = true;
-            setTimeout(() => {
-                element.classList.remove('copied');
-                showCopied = false;
-            }, 1000);
-        } catch (err) {
-            console.error('Failed to copy text: ', err);
+        } else {
+            // Fallback for HTTP
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            // Prevent scrolling to bottom
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
+            
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+            } finally {
+                textArea.remove();
+            }
         }
+
+        // Keep existing UI feedback
+        const element = document.getElementById('peerId');
+        element.classList.add('copied');
+        showCopied = true;
+        setTimeout(() => {
+            element.classList.remove('copied');
+            showCopied = false;
+        }, 1000);
+    } catch (err) {
+        console.error('Failed to copy text: ', err);
     }
+}
 
     function toggleQRCode() {
         showQRCode = !showQRCode;
