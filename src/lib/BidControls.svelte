@@ -11,6 +11,7 @@
         <input
           type="number"
           min="1"
+          pattern="[0-9]*"
           bind:value={bid.quantity}
           class="border p-2 rounded w-full sm:w-1/2 text-base"
           placeholder="Number of dice"
@@ -19,6 +20,7 @@
           type="number"
           min="1"
           max="6"
+          pattern="[0-9]*"
           bind:value={bid.value}
           on:change={validateBidValue}
           class="border p-2 rounded w-full sm:w-1/2 text-base"
