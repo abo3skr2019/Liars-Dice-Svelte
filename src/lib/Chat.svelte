@@ -86,7 +86,7 @@
 <div class="flex gap-2 relative">
     <button 
         on:click={() => showStickers = !showStickers}
-        class="bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 p-2 rounded transition duration-200"
+        class="shrink-0 bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 p-2 rounded transition duration-200"
         title="Add sticker"
         aria-label="Add sticker"
     >
@@ -96,20 +96,20 @@
         type="text"
         bind:value={chatInput}
         placeholder="Type a message..."
-        class="border p-2 rounded flex-grow"
+        class="border p-2 rounded w-0 flex-grow min-w-0"
         on:keypress={handleKeypress}
         on:keydown={handleKeydown}
     />
     <button 
         on:click={handleSendClick}
         disabled={!chatInput.trim()}
-        class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="shrink-0 bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
     >
         Send
     </button>
     <button 
         on:click={surrender}
-        class="bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 p-2 rounded transition duration-200"
+        class="shrink-0 bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 p-2 rounded transition duration-200"
         title="Surrender"
         aria-label="Surrender"
     >
