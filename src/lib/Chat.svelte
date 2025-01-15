@@ -1,4 +1,5 @@
 <script>
+    
     import { afterUpdate } from 'svelte';
     export let chatMessages = [];
     export let chatInput = '';
