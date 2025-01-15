@@ -116,7 +116,6 @@
             handleChallenge(data.challengerDice);
             break;
           case 'chat':
-            console.log()
             chatMessages = [...chatMessages, { sender: opponentName, message: data.message }];
             break;
           case 'rematch':
@@ -166,7 +165,7 @@
       });
     }
     catch(err){
-      console.log(err);
+      console.error(err);
     }
 
       // Handle incoming connections
@@ -294,20 +293,18 @@
     }
   
     function sendChatMessage() {
-      console.log('Chat input value:', chatInput); // Debug log
       if (!connection) {
-          console.log('No connection available');
+          console.error('No connection available');
           return;
       }
       
       if (chatInput && chatInput.trim().length > 0) {
-          console.log("Sending message:", chatInput.trim());
           const newMessage = { sender: 'You', message: chatInput.trim() };
           chatMessages = [...chatMessages, newMessage];
           connection.send({ type: 'chat', message: chatInput.trim() });
           chatInput = '';
       } else {
-          console.log('Empty message, not sending');
+          console.error('Empty message, not sending');
       }
     }
   
