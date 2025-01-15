@@ -183,6 +183,7 @@
         gameState = 'lobby';
         return;
       }
+      chatMessages = []
       gameState = 'playing';
       rollDice();
       // Host always goes first in the first round
@@ -284,7 +285,6 @@
       rollDice();
       bid = { quantity: null, value: null };
       message = 'New game started!';
-      chatMessages = [];
     }
   
     function rematch() {
