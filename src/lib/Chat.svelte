@@ -1,8 +1,17 @@
 <script>
+    import { afterUpdate } from 'svelte';
     export let chatMessages = [];
     export let chatInput = '';
     export let sendChatMessage;
     export let surrender;
+
+    let chatContainer;
+
+    function scrollToBottom() {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    afterUpdate(scrollToBottom);
 
     function handleKeypress(event) {
         if (event.key === 'Enter' && chatInput.trim().length > 0) {
@@ -19,7 +28,10 @@
 </script>
 
 <h2 class="text-xl font-bold mb-2">Chat</h2>
-<div class="border rounded p-2 h-64 overflow-y-auto mb-2">
+<div 
+    bind:this={chatContainer}
+    class="border rounded p-2 h-64 overflow-y-auto mb-2"
+>
     {#each chatMessages as chat}
         <p><strong>{chat.sender}:</strong> {chat.message}</p>
     {/each}
