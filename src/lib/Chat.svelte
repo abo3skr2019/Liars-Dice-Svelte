@@ -6,6 +6,8 @@
     export let surrender;
 
     let chatContainer;
+    let messageHistory = [];
+    let historyIndex = -1;
 
     function scrollToBottom() {
         chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -16,7 +18,28 @@
     function handleKeypress(event) {
         if (event.key === 'Enter' && chatInput.trim().length > 0) {
             event.preventDefault();
+            // Only add to history if different from last message
+            if (messageHistory.length === 0 || messageHistory[0] !== chatInput) {
+                messageHistory.unshift(chatInput);
+            }
+            historyIndex = -1;
             sendChatMessage();
+        }
+    }
+
+    function handleKeydown(event) {
+        if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            if (historyIndex < messageHistory.length - 1) {
+                historyIndex++;
+                chatInput = messageHistory[historyIndex];
+            }
+        } else if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            if (historyIndex > -1) {
+                historyIndex--;
+                chatInput = historyIndex === -1 ? '' : messageHistory[historyIndex];
+            }
         }
     }
 
@@ -43,6 +66,7 @@
         placeholder="Type a message..."
         class="border p-2 rounded flex-grow"
         on:keypress={handleKeypress}
+        on:keydown={handleKeydown}
     />
     <button 
         on:click={handleSendClick}
