@@ -84,6 +84,14 @@
     {/each}
 </div>
 <div class="flex gap-2 relative">
+    <button 
+        on:click={() => showStickers = !showStickers}
+        class="bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 p-2 rounded transition duration-200"
+        title="Add sticker"
+        aria-label="Add sticker"
+    >
+        <i class="fas fa-smile"></i>
+    </button>
     <input
         type="text"
         bind:value={chatInput}
@@ -93,14 +101,6 @@
         on:keydown={handleKeydown}
     />
     <button 
-        on:click={() => showStickers = !showStickers}
-        class="bg-white hover:bg-gray-100 text-gray-800 border border-gray-400 p-2 rounded transition duration-200"
-        title="Add sticker"
-        aria-label="Add sticker"
-    >
-        <i class="fas fa-smile"></i>
-    </button>
-    <button 
         on:click={handleSendClick}
         disabled={!chatInput.trim()}
         class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -109,7 +109,7 @@
     </button>
     <button 
         on:click={surrender}
-        class="bg-white hover:bg-gray-100 text-gray-800 border border-gray-400 p-2 rounded transition duration-200"
+        class="bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 p-2 rounded transition duration-200"
         title="Surrender"
         aria-label="Surrender"
     >
@@ -117,11 +117,11 @@
     </button>
     
     {#if showStickers}
-        <div class="absolute bottom-full mb-2 bg-white border rounded-lg shadow-lg p-2 grid grid-cols-3 gap-2">
+        <div class="absolute bottom-full mb-2 bg-gray-800 border border-gray-600 rounded-lg shadow-lg p-2 grid grid-cols-3 gap-2">
             {#each stickers as sticker}
                 <button
                     on:click={() => handleStickerClick(sticker)}
-                    class="p-2 hover:bg-gray-100 rounded transition duration-200"
+                    class="p-2 hover:bg-gray-700 rounded transition duration-200"
                 >
                     <img src={`${sticker}`} alt={sticker} class="w-12 h-12 object-contain"/>
                 </button>
