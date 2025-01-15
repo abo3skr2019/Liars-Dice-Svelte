@@ -8,6 +8,11 @@
     let chatContainer;
     let messageHistory = [];
     let historyIndex = -1;
+    let showStickers = false;
+
+    const stickers = [
+        'Accusation.png', 'nervous.gif',"shock.png"
+    ];
 
     function scrollToBottom() {
         chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -48,6 +53,12 @@
             sendChatMessage();
         }
     }
+
+    function handleStickerClick(sticker) {
+        chatInput = `[sticker:${sticker}]`;
+        showStickers = false;
+        sendChatMessage();
+    }
 </script>
 
 <h2 class="text-xl font-bold mb-2">Chat</h2>
@@ -56,10 +67,18 @@
     class="border rounded p-2 h-64 overflow-y-auto mb-2"
 >
     {#each chatMessages as chat}
-        <p><strong>{chat.sender}:</strong> {chat.message}</p>
+        {#if chat.message.startsWith('[sticker:')}
+            {@const stickerName = chat.message.slice(9, -1)}
+            <p class="flex items-center gap-2">
+                <strong>{chat.sender}:</strong>
+                <img src={`${stickerName}`} alt="sticker" class="w-24 h-24 object-contain"/>
+            </p>
+        {:else}
+            <p><strong>{chat.sender}:</strong> {chat.message}</p>
+        {/if}
     {/each}
 </div>
-<div class="flex gap-2">
+<div class="flex gap-2 relative">
     <input
         type="text"
         bind:value={chatInput}
@@ -68,6 +87,14 @@
         on:keypress={handleKeypress}
         on:keydown={handleKeydown}
     />
+    <button 
+        on:click={() => showStickers = !showStickers}
+        class="bg-white hover:bg-gray-100 text-gray-800 border border-gray-400 p-2 rounded transition duration-200"
+        title="Add sticker"
+        aria-label="Add sticker"
+    >
+        <i class="fas fa-smile"></i>
+    </button>
     <button 
         on:click={handleSendClick}
         disabled={!chatInput.trim()}
@@ -83,4 +110,17 @@
     >
         <i class="fas fa-flag"></i>
     </button>
+    
+    {#if showStickers}
+        <div class="absolute bottom-full mb-2 bg-white border rounded-lg shadow-lg p-2 grid grid-cols-3 gap-2">
+            {#each stickers as sticker}
+                <button
+                    on:click={() => handleStickerClick(sticker)}
+                    class="p-2 hover:bg-gray-100 rounded transition duration-200"
+                >
+                    <img src={`/${sticker}`} alt={sticker} class="w-12 h-12 object-contain"/>
+                </button>
+            {/each}
+        </div>
+    {/if}
 </div>
