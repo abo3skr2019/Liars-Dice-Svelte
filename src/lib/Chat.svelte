@@ -10,9 +10,14 @@
     let historyIndex = -1;
     let showStickers = false;
 
-    const stickers = [
-        'Accusation.png', 'nervous.gif',"shock.png"
-    ];
+    // Import all stickers from the public/stickers directory
+    const stickerFiles = import.meta.glob('/public/stickers/**', {
+  query: '?raw',
+  import: 'default',
+});
+    console.log(stickerFiles)
+    const stickers = Object.keys(stickerFiles).map(path => path.replace('/public', '/Liars-Dice-Svelte'));
+    console.log(stickers)
 
     function scrollToBottom() {
         chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -118,7 +123,7 @@
                     on:click={() => handleStickerClick(sticker)}
                     class="p-2 hover:bg-gray-100 rounded transition duration-200"
                 >
-                    <img src={`/${sticker}`} alt={sticker} class="w-12 h-12 object-contain"/>
+                    <img src={`${sticker}`} alt={sticker} class="w-12 h-12 object-contain"/>
                 </button>
             {/each}
         </div>
