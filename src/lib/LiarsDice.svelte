@@ -488,12 +488,7 @@
         position: absolute;
         top: -20px;
         right: 0;
-        background-color: #4a5568;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-size: 0.75rem;
         animation: fadeInOut 1s ease-in-out;
-        white-space: nowrap;
     }
 
     @keyframes fadeInOut {
@@ -515,27 +510,11 @@
         }
     }
 
-    @media (max-width: 640px) {
-      :global(input[type="number"]) {
-        font-size: 16px; /* Prevents iOS zoom on focus */
-      }
-      
-      :global(.container) {
-        width: 100%;
-        padding-left: 1rem;
-        padding-right: 1rem;
-      }
-    }
-
     @keyframes pulse {
         0%, 100% { transform: scale(1); }
         50% { transform: scale(1.1); }
     }
     
-    :global(.round-transition) {
-        animation: pulse 1s ease-in-out infinite;
-    }
-
     .transitioning {
         opacity: 0.6;
         transition: opacity 0.3s ease;

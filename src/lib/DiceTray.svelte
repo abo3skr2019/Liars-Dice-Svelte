@@ -6,7 +6,6 @@
     export let dice = [];
     export let diceCount;
     export let label;
-    export let behindOverlay = false; // New prop to control z-index
     
     let mounted = false;
     
@@ -16,17 +15,17 @@
     });
 
     function getStaggerDelay(index) {
-        return index * 100; // Reduced from 150ms to 100ms
+        return index * 100;
     }
 </script>
 
-<div class="dice-tray {behindOverlay ? 'behind-overlay' : ''}">
+<div class="relative">
     <h2 class="text-xl font-bold mb-2 text-center">{label}: {diceCount}</h2>
-    <div class="dice-container">
+    <div class="flex justify-center gap-2 mx-auto min-h-12">
         {#each dice as roll, i (roll + '-' + i + '-' + Date.now())}
-            <div class="dice-slot">
+            <div class="relative w-10 h-10 sm:w-12 sm:h-12">
                 <div 
-                    class="dice" 
+                    class="absolute inset-0 flex items-center justify-center bg-gray-800 text-gray-200 rounded-lg shadow-md transition-transform hover:translate-y-[-2px] hover:shadow-lg cursor-pointer text-xl sm:text-2xl"
                     in:fly={{ 
                         y: 50,
                         duration: 500,
@@ -47,60 +46,6 @@
 </div>
 
 <style>
-    .dice-container {
-        display: flex;
-        justify-content: center;
-        gap: 0.5rem;
-        margin: 0 auto;
-        min-height: 3rem;
-    }
-
-    .dice-slot {
-        flex: 0 0 auto;
-        width: 2.5rem;
-        height: 2.5rem;
-        position: relative;
-    }
-
-    .dice {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #2d3748;
-        color: #e2e8f0;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        transition: transform 0.2s;
-        font-size: 1.5rem;
-        cursor: pointer;
-    }
-
-    @media (min-width: 640px) {
-        .dice-slot {
-            width: 3rem;
-            height: 3rem;
-        }
-        
-        .dice {
-            font-size: 2rem;
-        }
-    }
-
-    .dice:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .dice-tray {
-        position: relative;
-    }
-    
-    .behind-overlay {
-        z-index: 1;
-    }
-
     @keyframes appear {
         to {
             opacity: 1;
