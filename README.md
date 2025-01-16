@@ -40,7 +40,8 @@ A peer-to-peer online implementation of the classic bluffing dice game "Liar's D
 
 ## Development
 ### Todo
-- [ ] add a max to the quantity to be the sum of mydice+opponentdice
+- [x] add a max to the quantity to be the sum of mydice+opponentdice
+- [ ] Set ranges to 1 on round reset 
 - [ ] Multiplayer Support instead of just duels 
 - [x] Speedup new Round 
 - [x] QR Code input for connection codes 
