@@ -47,6 +47,10 @@ A peer-to-peer online implementation of the classic bluffing dice game "Liar's D
 - [x] QR Code input for connection codes 
 - [x] 3d Dice (Maybe)
   - Well We made better dice so i'll mark this off for now 
+- [ ] Create Store files for easier state management
+  - [ ] GameStateStore
+  - [ ] ChatStore
+  - [ ] ConnectionStore
 ### Prerequisites
 - Node.js
 - npm or yarn
