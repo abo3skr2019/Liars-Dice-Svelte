@@ -53,7 +53,7 @@ A peer-to-peer online implementation of the classic bluffing dice game "Liar's D
   - [ ] ConnectionStore
 ### Prerequisites
 - Node.js
-- npm or yarn
+- npm
 
 ### Setup
 ```bash
