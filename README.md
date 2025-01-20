@@ -42,15 +42,14 @@ A peer-to-peer online implementation of the classic bluffing dice game "Liar's D
 ### Todo
 - [x] add a max to the quantity to be the sum of mydice+opponentdice
 - [ ] Set ranges to 1 on round reset 
+  - [ ] Change the Face to start from 2 
+- [ ] Add bid validation so that the player can't decrease the denomination on the same dice count
 - [ ] Multiplayer Support instead of just duels 
 - [x] Speedup new Round 
 - [x] QR Code input for connection codes 
 - [x] 3d Dice (Maybe)
   - Well We made better dice so i'll mark this off for now 
-- [ ] Create Store files for easier state management
-  - [ ] GameStateStore
-  - [ ] ChatStore
-  - [ ] ConnectionStore
+
 ### Prerequisites
 - Node.js
 - npm or yarn
