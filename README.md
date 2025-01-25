@@ -45,6 +45,7 @@ A peer-to-peer online implementation of the classic bluffing dice game "Liar's D
   - [ ] Change the Face to start from 2 
 - [ ] Add bid validation so that the player can't decrease the denomination on the same dice count
 - [ ] Multiplayer Support instead of just duels 
+- [ ] Change all alerts to modals for better UX
 - [x] Speedup new Round 
 - [x] QR Code input for connection codes 
 - [x] 3d Dice (Maybe)
