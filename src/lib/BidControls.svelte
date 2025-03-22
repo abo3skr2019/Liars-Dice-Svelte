@@ -65,6 +65,7 @@ $: bidRequirementText = previousBid && previousBid.quantity && previousBid.value
             min="{minimumBid.quantity}"
             max={totalDice}
             bind:value={bid.quantity}
+            disabled={previousBid && previousBid.value === 6 && previousBid.quantity >= totalDice}
             class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500 "
           />
         </div>
@@ -79,6 +80,7 @@ $: bidRequirementText = previousBid && previousBid.quantity && previousBid.value
             max="6"
             bind:value={bid.value}
             on:change={validateBidValue}
+            disabled={previousBid && previousBid.value === 6 && previousBid.quantity >= totalDice}
             class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500 "
           />
         </div>
@@ -89,7 +91,7 @@ $: bidRequirementText = previousBid && previousBid.quantity && previousBid.value
         <button 
           on:click={makeBid}
           class="w-full {isValidBid ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500 cursor-not-allowed'} text-white p-2 rounded transition duration-200"
-          disabled={!isValidBid}
+          disabled={!isValidBid || (previousBid.value === 6 && previousBid.quantity >= totalDice)}
           title={!isValidBid ? 'This bid is not higher than the previous bid' : 'Make this bid'}
         >
           Make Bid
