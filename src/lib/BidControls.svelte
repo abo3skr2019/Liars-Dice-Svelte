@@ -25,20 +25,27 @@
             }
         }
     }
-    let minimumBid 
-    if (previousBid && previousBid.quantity && previousBid.value && previousBid.quantity < totalDice) {
-        minimumBid = {
+    let minimumBid = calculateMinimumBid(previousBid,totalDice);
+    function calculateMinimumBid(previousBid,totalDice)
+    {
+      if (previousBid && previousBid.quantity && previousBid.value && previousBid.quantity < totalDice) {
+         return {
           quantity: previousBid.quantity + 1,
           value: previousBid.value
         };
-    } else if(previousBid && previousBid.quantity && previousBid.value && previousBid.quantity < totalDice) {
-        minimumBid = {
+    } else if(previousBid && previousBid.quantity && previousBid.value && previousBid.quantity < totalDice && previousBid.value < 6) {
+        return {
           quantity: previousBid.quantity,
           value: previousBid.value + 1
         };
     } else {
-        minimumBid = null;
+        return {
+          quantity: 1,
+          value: 1
+        };
     }
+    }
+
     $: bidRequirementText = previousBid && previousBid.quantity && previousBid.value ? `You must bid at least ${minimumBid.quantity} ${minimumBid.value}s` : '';
 </script>
 
@@ -59,7 +66,7 @@
           <input
             id="quantity"
             type="range"
-            min="1"
+            min="{minimumBid.quantity}"
             max={totalDice}
             bind:value={bid.quantity}
             class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500 "
@@ -72,7 +79,7 @@
           <input
             id="value"
             type="range"
-            min="1"
+            min={previousBid && bid.quantity === previousBid.quantity ? Math.max(minimumBid.value, previousBid.value + 1) : 1}
             max="6"
             bind:value={bid.value}
             on:change={validateBidValue}
