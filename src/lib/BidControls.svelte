@@ -97,8 +97,8 @@ $: bidRequirementText = previousBid && previousBid.quantity && previousBid.value
         <button 
           on:click={challenge}
           class="w-full bg-red-500 hover:bg-red-600 text-white p-2 rounded transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={!previousBid}
-          title={!previousBid ? 'Cannot challenge when there is no previous bid' : 'Challenge the last bid'}
+          disabled={!previousBid || !previousBid.quantity}
+          title={!previousBid && !previousBid.quantity ? 'Cannot challenge when there is no previous bid' : 'Challenge the last bid'}
         >
           Challenge
         </button>
