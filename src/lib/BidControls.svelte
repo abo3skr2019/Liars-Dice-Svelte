@@ -7,7 +7,6 @@
     export let opponentDiceCount;
     export let previousBid;
     export let validateBid;
-
     $: totalDice = diceCount + opponentDiceCount;
     $: isValidBid = validateBid(bid);
     
@@ -26,10 +25,21 @@
             }
         }
     }
-    
-    $: bidRequirementText = previousBid && previousBid.quantity && previousBid.value
-        ? `Minimum bid: ${previousBid.quantity} x ${Math.min(previousBid.value + 1, 6)}'s or ${previousBid.quantity + 1} x any value`
-        : "First bid - any valid combination";
+    let minimumBid 
+    if (previousBid && previousBid.quantity && previousBid.value && previousBid.quantity < totalDice) {
+        minimumBid = {
+          quantity: previousBid.quantity + 1,
+          value: previousBid.value
+        };
+    } else if(previousBid && previousBid.quantity && previousBid.value && previousBid.quantity < totalDice) {
+        minimumBid = {
+          quantity: previousBid.quantity,
+          value: previousBid.value + 1
+        };
+    } else {
+        minimumBid = null;
+    }
+    $: bidRequirementText = previousBid && previousBid.quantity && previousBid.value ? `You must bid at least ${minimumBid.quantity} ${minimumBid.value}s` : '';
 </script>
 
 <div class="mb-4">
