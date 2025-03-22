@@ -28,23 +28,20 @@
     let minimumBid = calculateMinimumBid(previousBid,totalDice);
     function calculateMinimumBid(previousBid,totalDice)
     {
-      if (previousBid && previousBid.quantity && previousBid.value && previousBid.quantity < totalDice) {
-         return {
-          quantity: previousBid.quantity + 1,
-          value: previousBid.value
-        };
-    } else if(previousBid && previousBid.quantity && previousBid.value && previousBid.quantity < totalDice && previousBid.value < 6) {
-        return {
-          quantity: previousBid.quantity,
-          value: previousBid.value + 1
-        };
-    } else {
-        return {
-          quantity: 1,
-          value: 1
-        };
+function calculateMinimumBid(previousBid, totalDice)
+{
+  if (previousBid && previousBid.quantity && previousBid.value) {
+    // If previousBid.value < 6 and we only need to increase value
+    if (previousBid.quantity < totalDice && previousBid.value < 6) {
+      return { quantity: previousBid.quantity, value: previousBid.value + 1 };
     }
+    // Otherwise increase quantity
+    if (previousBid.quantity < totalDice) {
+      return { quantity: previousBid.quantity + 1, value: previousBid.value };
     }
+  }
+  return { quantity: 1, value: 1 };
+}
 
     $: bidRequirementText = previousBid && previousBid.quantity && previousBid.value ? `You must bid at least ${minimumBid.quantity} ${minimumBid.value}s` : '';
 </script>
