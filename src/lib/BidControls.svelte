@@ -1,14 +1,14 @@
 <script>
-    export let bid;
-    export let makeBid;
-    export let challenge;
-    export let validateBidValue;
-    export let diceCount;
-    export let opponentDiceCount;
-    export let previousBid;
-    export let validateBid;
-    $: totalDice = diceCount + opponentDiceCount;
-    $: isValidBid = validateBid(bid);
+  export let bid;
+  export let makeBid;
+  export let challenge;
+  export let validateBidValue;
+  export let diceCount;
+  export let opponentDiceCount;
+  export let previousBid;
+  export let validateBid;
+  $: totalDice = diceCount + opponentDiceCount;
+  $: isValidBid = validateBid(bid);
     
     // Automatically adjust bid to be valid when previousBid changes
     $: if (previousBid && bid.quantity && bid.value) {
@@ -26,8 +26,7 @@
         }
     }
     let minimumBid = calculateMinimumBid(previousBid,totalDice);
-    function calculateMinimumBid(previousBid,totalDice)
-    {
+
 function calculateMinimumBid(previousBid, totalDice)
 {
   if (previousBid && previousBid.quantity && previousBid.value) {
@@ -43,9 +42,9 @@ function calculateMinimumBid(previousBid, totalDice)
   return { quantity: 1, value: 1 };
 }
 
-    $: bidRequirementText = previousBid && previousBid.quantity && previousBid.value ? `You must bid at least ${minimumBid.quantity} ${minimumBid.value}s` : '';
-</script>
+$: bidRequirementText = previousBid && previousBid.quantity && previousBid.value ? `You must bid at least ${minimumBid.quantity} ${minimumBid.value}s` : '';
 
+</script>
 <div class="mb-4">
     {#if previousBid && previousBid.quantity && previousBid.value}
         <div class="text-sm mb-3 text-gray-400">
