@@ -198,7 +198,9 @@
   
     function validateBid(newBid) {
       // First bid of the game is always valid
-      if (!previousBid) return true;
+      if (!previousBid || previousBid.quantity === null || previousBid.value === null) {
+        return true;
+      }
       
       // Validate against previous bid
       if (newBid.quantity > previousBid.quantity) {
