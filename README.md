@@ -43,7 +43,8 @@ A peer-to-peer online implementation of the classic bluffing dice game "Liar's D
 - [x] add a max to the quantity to be the sum of mydice+opponentdice
 - [ ] Set ranges to 1 on round reset 
   - [ ] Change the Face to start from 2 
-- [ ] Add bid validation so that the player can't decrease the denomination on the same dice count
+- [x] Add bid validation so that the player can't decrease the denomination on the same dice count
+  - Although some UI/UX issues are happening due to it 
 - [ ] Multiplayer Support instead of just duels 
 - [ ] Change all alerts to modals for better UX
 - [x] Speedup new Round 
