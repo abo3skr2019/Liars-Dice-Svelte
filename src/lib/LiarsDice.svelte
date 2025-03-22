@@ -24,6 +24,7 @@
     let diceCount = 5;
     let opponentDiceCount = 5;
     let bid = { quantity: null, value: null };
+    let previousBid = { quantity: null, value: null }; // Add variable to track previous bid
     let gameState = 'lobby';
     let message = '';
     let isMyTurn = false;
@@ -108,7 +109,9 @@
             startGame();
             break;
           case 'bid':
-            bid = data.bid;
+            // Update previousBid with the received bid, not the local bid controls state
+            previousBid = data.bid;
+            bid = { ...data.bid }; // Use a copy to avoid reference issues
             isMyTurn = true;
             message = `${opponentName} bid ${bid.quantity} x ${bid.value}'s. Your turn.`;
             break;
@@ -193,6 +196,22 @@
         : `Game started! Waiting for ${opponentName}'s first bid...`;
     }
   
+    function validateBid(newBid) {
+      // First bid of the game is always valid
+      if (!previousBid || previousBid.quantity === null || previousBid.value === null) {
+        return true;
+      }
+      
+      // Validate against previous bid
+      if (newBid.quantity > previousBid.quantity) {
+        return true;
+      } else if (newBid.quantity === previousBid.quantity && newBid.value > previousBid.value) {
+        return true;
+      }
+      
+      return false;
+    }
+  
     function makeBid() {
       if (!isMyTurn) {
         alert("It's not your turn!");
@@ -202,7 +221,20 @@
         alert('Invalid bid! Quantity must be positive and value must be between 1 and 6.');
         return;
       }
-      connection.send({ type: 'bid', bid });
+      
+      // Validate bid against previous bid
+      if (!validateBid(bid)) {
+        alert('Invalid bid! You must bid a higher quantity, or the same quantity with a higher value.');
+        return;
+      }
+      
+      // Send a copy of the current bid
+      const bidToSend = { ...bid };
+      connection.send({ type: 'bid', bid: bidToSend });
+      
+      // This player's bid becomes the previous bid for the next round
+      previousBid = { ...bid };
+      
       isMyTurn = false;
       message = `You bid ${bid.quantity} x ${bid.value}'s. Waiting for ${opponentName}'s move.`;
     }
@@ -271,6 +303,7 @@
         if (shouldRollDice) {
             rollDice();
         }
+        previousBid = { quantity: null, value: null }; // Reset previous bid for new round
         bid = { quantity: null, value: null };
         isMyTurn = !isMyTurn;
         message = isMyTurn 
@@ -283,6 +316,7 @@
       opponentDiceCount = 5;
       gameState = 'playing';
       rollDice();
+      previousBid = { quantity: null, value: null }; // Reset previous bid for new game
       bid = { quantity: null, value: null };
       message = 'New game started!';
     }
@@ -438,6 +472,12 @@
           <DiceTray {dice} {diceCount} label="Your Dice" />  
           <h2 class="text-lg sm:text-xl font-bold mb-2">Current Bid:</h2>
           <p class="text-base sm:text-lg mb-4">{bid.quantity} x {bid.value}'s</p>
+          
+          <!-- Add previous bid display -->
+          {#if previousBid && previousBid.quantity && previousBid.value}
+            <h3 class="text-sm sm:text-base font-semibold text-gray-400">Previous Bid:</h3>
+            <p class="text-sm sm:text-base text-gray-400 mb-4">{previousBid.quantity} x {previousBid.value}'s</p>
+          {/if}
   
           {#if gameState === 'playing'}
             <div class="mb-4 text-base sm:text-lg font-bold {isMyTurn ? 'text-green-600' : 'text-red-600'}">
@@ -450,6 +490,8 @@
               {validateBidValue} 
               {diceCount}
               {opponentDiceCount}
+              {previousBid}
+              {validateBid}
             />
           {/if}
   
