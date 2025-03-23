@@ -31,6 +31,7 @@
   "include": [
   "svelte/src/**/*.d.ts", 
   "svelte/src/**/*.js", 
-  "svelte/src/**/*.svelte"
+  "svelte/src/**/*.svelte",
+  "vite-env.d.ts"
 ]
 }
