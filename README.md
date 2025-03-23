@@ -47,6 +47,9 @@ A peer-to-peer online implementation of the classic bluffing dice game "Liar's D
   - Although some UI/UX issues are happening due to it 
 - [ ] Multiplayer Support instead of just duels 
 - [ ] Change all alerts to modals for better UX
+- [ ] Learn MonoRepos by adding
+  - [ ] React
+  - [ ] React Native
 - [x] Speedup new Round 
 - [x] QR Code input for connection codes 
 - [x] 3d Dice (Maybe)
