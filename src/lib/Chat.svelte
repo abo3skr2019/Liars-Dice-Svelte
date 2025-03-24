@@ -17,7 +17,7 @@
   import: 'default',
 });
     console.log(stickerFiles)
-    const stickers = Object.keys(stickerFiles).map(path => path.replace('/public', '/Liars-Dice-Svelte'));
+    const stickers = Object.keys(stickerFiles).map(path => path.replace('/public', ''));
     console.log(stickers)
 
     function scrollToBottom() {
