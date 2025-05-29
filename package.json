@@ -6,20 +6,23 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.49",
+    "@tsconfig/svelte": "^5.0.4",
+    "@types/qrcode": "^1.5.5",
     "svelte": "^5.15.0",
-    "tailwindcss": "^3.4.17",
+    "typescript": "~5.8.3",
     "vite": "^6.0.5"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
+    "@tailwindcss/vite": "^4.1.8",
     "peerjs": "^1.5.4",
-    "qrcode": "^1.5.4"
+    "qrcode": "^1.5.4",
+    "tailwindcss": "^4.1.8"
   },
   "packageManager": "pnpm@10.6.2+sha512.47870716bea1572b53df34ad8647b42962bc790ce2bf4562ba0f643237d7302a3d6a8ecef9e4bdfc01d23af1969aa90485d4cebb0b9638fa5ef1daef656f6c1b"
 }
