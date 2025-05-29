@@ -1,7 +1,7 @@
 # Liar's Dice Online
 
 A peer-to-peer online implementation of the classic bluffing dice game "Liar's Dice" built with Svelte and PeerJS.
-[Demo](https://abo3skr2019.github.io/Liars-Dice-Svelte/)
+[Demo](https://liars.askardesign.com/)
 
 ## Features
 
