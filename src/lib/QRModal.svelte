@@ -7,6 +7,7 @@
     export let closeModal;
     
     let qrCanvas;
+    let showCopied = false;
     
     onMount(async () => {
         if (qrCanvas) {
@@ -18,8 +19,8 @@
                 width: 256,
                 margin: 2,
                 color: {
-                    light: '#2d3748',
-                    dark: '#e2e8f0'
+                    light: '#374151', // Darker background (gray-700)
+                    dark: '#d1d5db'  // Slightly dimmer foreground (gray-300)
                 }
             });
         }
@@ -32,7 +33,7 @@
      transition:fade={{duration: 300}} 
      on:click={closeModal} 
      on:keydown={(e) => e.key === 'Enter' && closeModal()}>
-    <div class="bg-gray-800 p-8 rounded-xl shadow-2xl text-center relative border border-gray-600 flex flex-col items-center max-w-[90%] w-[380px]" 
+    <div class="bg-gray-800 p-8 rounded-xl shadow-2xl text-center relative border border-gray-600 flex flex-col items-center max-w-[90%] w-[450px]" 
          role="dialog" 
          transition:scale={{duration: 400, start: 0.95}} 
          on:click|stopPropagation>
@@ -53,24 +54,40 @@
             <h2 class="text-xl font-bold">Scan QR Code</h2>
         </div>
         
-        <!-- QR Canvas with better styling -->
-        <div class="bg-white p-3 rounded-lg shadow-inner mb-4">
+        <!-- QR Canvas with dark mode styling -->
+        <div class="p-3 rounded-lg shadow-inner mb-4">
             <canvas class="rounded-lg mx-auto" bind:this={qrCanvas}></canvas>
         </div>
         
         <!-- Instructions -->
-        <div class="text-center space-y-3">
-            <p class="text-sm bg-gray-700 p-2 rounded-lg flex items-center">
+        <div class="text-center space-y-3 w-full">
+            <p class="text-sm bg-gray-700 p-3 rounded-lg flex items-center justify-center">
                 <i class="fas fa-info-circle mr-2 text-blue-400"></i>
-                Scan this code with your mobile device to connect
+                <span>Scan this code with your mobile device to connect</span>
             </p>
             
-            <div class="text-xs text-gray-400 flex flex-col items-center">
+            <div class="text-xs text-gray-400 flex flex-col items-center w-full">
                 <p>OR</p>
                 <p class="mt-2">Share this link with your opponent:</p>
-                <code class="bg-gray-900 p-2 rounded mt-1 block truncate w-full text-xs">
-                    {window.location.origin}?connect={peerId}
-                </code>
+                <div class="w-full overflow-hidden relative">
+                    <code class="bg-gray-900 p-2 pr-10 rounded mt-1 block w-full text-xs overflow-x-auto whitespace-nowrap">
+                        {window.location.origin}?connect={peerId}
+                    </code>
+                    <button 
+                        class="absolute right-1 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white p-1 rounded w-8 h-8 flex items-center justify-center transition-colors duration-200"
+                        on:click={() => {
+                            navigator.clipboard.writeText(`${window.location.origin}?connect=${peerId}`);
+                            showCopied = true;
+                            setTimeout(() => showCopied = false, 2000);
+                        }}
+                        aria-label="Copy link"
+                    >
+                        <i class="fas {showCopied ? 'fa-check' : 'fa-copy'}"></i>
+                    </button>
+                </div>
+                {#if showCopied}
+                    <p class="text-xs text-green-400 mt-1">Copied to clipboard!</p>
+                {/if}
             </div>
         </div>
     </div>

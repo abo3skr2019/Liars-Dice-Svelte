@@ -74,17 +74,17 @@ $: bidRequirementText = previousBid && previousBid.quantity && previousBid.value
             <label for="value">Dice Face: <span class="font-bold text-green-400">{bid.value || 1}</span></label>
             <span class="text-sm">
               {#if bid.value === 1}
-                <i class="fas fa-dice-one text-green-400"></i>
+                <i class="fas fa-dice-one text-blue-400"></i>
               {:else if bid.value === 2}
                 <i class="fas fa-dice-two text-green-400"></i>
               {:else if bid.value === 3}
-                <i class="fas fa-dice-three text-green-400"></i>
+                <i class="fas fa-dice-three text-yellow-400"></i>
               {:else if bid.value === 4}
-                <i class="fas fa-dice-four text-green-400"></i>
+                <i class="fas fa-dice-four text-red-400"></i>
               {:else if bid.value === 5}
-                <i class="fas fa-dice-five text-green-400"></i>
+                <i class="fas fa-dice-five text-purple-400"></i>
               {:else if bid.value === 6}
-                <i class="fas fa-dice-six text-green-400"></i>
+                <i class="fas fa-dice-six text-orange-400"></i>
               {/if}
             </span>
           </div>
