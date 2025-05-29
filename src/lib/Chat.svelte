@@ -1,32 +1,31 @@
-<script>
-    
+<script lang="ts">
     import { afterUpdate } from 'svelte';
-    export let chatMessages = [];
-    export let chatInput = '';
-    export let sendChatMessage;
-    export let surrender;
+    export let chatMessages: Array<{sender: string, message: string}> = [];
+    export let chatInput: string = '';
+    export let sendChatMessage: () => void;
+    export let surrender: () => void;
 
-    let chatContainer;
-    let messageHistory = [];
-    let historyIndex = -1;
-    let showStickers = false;
+    let chatContainer: HTMLElement;
+    let messageHistory: string[] = [];
+    let historyIndex: number = -1;
+    let showStickers: boolean = false;
 
     // Import all stickers from the public/stickers directory
     const stickerFiles = import.meta.glob('/public/stickers/**', {
-  query: '?raw',
-  import: 'default',
-});
+      query: '?raw',
+      import: 'default',
+    });
     console.log(stickerFiles)
     const stickers = Object.keys(stickerFiles).map(path => path.replace('/public', ''));
     console.log(stickers)
 
-    function scrollToBottom() {
+    function scrollToBottom(): void {
         chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
     afterUpdate(scrollToBottom);
 
-    function handleKeypress(event) {
+    function handleKeypress(event: KeyboardEvent): void {
         if (event.key === 'Enter' && chatInput.trim().length > 0) {
             event.preventDefault();
             // Only add to history if different from last message
@@ -38,7 +37,7 @@
         }
     }
 
-    function handleKeydown(event) {
+    function handleKeydown(event: KeyboardEvent): void {
         if (event.key === 'ArrowUp') {
             event.preventDefault();
             if (historyIndex < messageHistory.length - 1) {
@@ -54,13 +53,13 @@
         }
     }
 
-    function handleSendClick() {
+    function handleSendClick(): void {
         if (chatInput.trim().length > 0) {
             sendChatMessage();
         }
     }
 
-    function handleStickerClick(sticker) {
+    function handleStickerClick(sticker: string): void {
         chatInput = `[sticker:${sticker}]`;
         showStickers = false;
         sendChatMessage();
@@ -99,8 +98,8 @@
     </div>
     <div class="flex gap-2 p-3 bg-gray-900 border-t border-gray-700">
         <button 
-            on:click={() => showStickers = !showStickers}
-            class="shrink-0 bg-gray-700 hover:bg-gray-600 text-white rounded-full p-2 w-10 h-10 flex items-center justify-center transition duration-200"
+        on:click={() => showStickers = !showStickers}
+        class="shrink-0 bg-gray-700 hover:bg-gray-600 text-white rounded-full p-2 w-10 h-10 flex items-center justify-center transition duration-200"
             title="Add sticker"
             aria-label="Add sticker"
         >
@@ -133,7 +132,8 @@
     </div>
     
     {#if showStickers}
-        <div class="absolute bottom-full left-0 mb-2 bg-gray-800 border border-gray-600 rounded-lg shadow-lg p-3 z-50 max-h-[300px] overflow-y-auto w-full max-w-md">
+        <div class="fixed transform -translate-x-0 bg-gray-800 border border-gray-600 rounded-lg shadow-lg p-3 z-50 max-h-[300px] overflow-y-auto w-full max-w-md" 
+             style="bottom: {chatContainer?.getBoundingClientRect().top - 10}px; left: {chatContainer?.getBoundingClientRect().left}px;">
             <div class="flex justify-between items-center mb-2 pb-2 border-b border-gray-700">
                 <h3 class="font-bold text-sm">Choose a Sticker</h3>
                 <button 
