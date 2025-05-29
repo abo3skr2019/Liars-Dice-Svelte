@@ -424,65 +424,175 @@
   </script>
   
   <main class="container mx-auto p-2 sm:p-4 relative max-w-4xl">
-    <h1 class="text-2xl sm:text-3xl font-bold mb-4">Liar's Dice</h1>
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400">
+            Liar's Dice
+        </h1>
+        <div class="hidden sm:block">
+            <span class="bg-gray-800 text-white py-1 px-3 rounded-full text-sm font-medium border border-gray-700">
+                P2P Multiplayer
+            </span>
+        </div>
+    </div>
   
     {#if gameState === 'lobby'}
-      <div class="mb-4 space-y-3">
-        <input
-          type="text"
-          bind:value={playerName}
-          placeholder="Enter name (optional)"
-          class="w-full sm:w-auto border p-2 mr-2 rounded"
-        />
-        <p class="my-2 text-sm sm:text-base">Your Connection Code: 
-            <span 
+      <div class="mb-4 bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
+        <h2 class="text-xl font-bold mb-4 flex items-center">
+          <i class="fas fa-dice mr-2 text-yellow-400"></i> Game Lobby
+        </h2>
+        
+        <div class="space-y-5">
+          <!-- Player Name Input -->
+          <div class="mb-4">
+            <label for="playerName" class="block text-sm font-medium mb-2">Your Name</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                <i class="fas fa-user text-gray-400"></i>
+              </span>
+              <input
+                id="playerName"
+                type="text"
+                bind:value={playerName}
+                placeholder="Enter your name (optional)"
+                class="w-full border border-gray-600 bg-gray-700 p-2 pl-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+          
+          <!-- Connection Code -->
+          <div class="bg-gray-900 p-4 rounded-lg border border-gray-700 mb-4">
+            <label class="block text-sm font-medium mb-2">Your Connection Code</label>
+            <div class="flex flex-wrap items-center gap-2">
+              <span 
                 id="peerId"
-                class="font-mono bg-gray-700 text-gray-100 p-1 rounded cursor-pointer hover:bg-gray-600 transition-colors duration-200 relative"
+                class="font-mono bg-gray-700 text-gray-100 p-2 px-3 rounded-lg cursor-pointer hover:bg-gray-600 transition-colors duration-200 flex-grow break-all relative"
                 role="button"
                 tabindex="0"
                 on:click={() => copyToClipboard(peerId)}
                 on:keydown={(e) => e.key === 'Enter' && copyToClipboard(peerId)}
-            >
+              >
+                <i class="fas fa-copy mr-2 text-sm text-blue-400"></i>
                 {peerId}
                 {#if showCopied}
-                    <span class="copied-indicator">Copied!</span>
+                  <span class="copied-indicator bg-green-700 text-white text-xs py-1 px-2 rounded-md">Copied!</span>
                 {/if}
-            </span>
-            <button
-                class="ml-2 text-sm bg-gray-700 hover:bg-gray-600 p-1 rounded"
+              </span>
+              <button
+                class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition duration-200 flex items-center"
                 on:click={toggleQRCode}
                 aria-label="Show QR Code"
+              >
+                <i class="fas fa-qrcode mr-1"></i>
+                <span class="hidden sm:inline">QR Code</span>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Connect to Opponent -->
+          <div class="mb-4">
+            <label for="connectId" class="block text-sm font-medium mb-2">Connect to Opponent</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                <i class="fas fa-link text-gray-400"></i>
+              </span>
+              <input
+                id="connectId"
+                type="text"
+                bind:value={connectId}
+                placeholder="Paste your opponent's connection code"
+                class="w-full border border-gray-600 bg-gray-700 p-2 pl-10 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <button 
+              on:click={connectToPeer} 
+              class="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg font-medium transition duration-200 flex items-center justify-center gap-2 shadow-md"
             >
-                <i class="fas fa-qrcode"></i>
+              <i class="fas fa-gamepad"></i> Connect to Opponent
             </button>
-        </p>
-        <input
-          type="text"
-          bind:value={connectId}
-          placeholder="Enter Connection Code to connect"
-          class="w-full sm:w-auto border p-2 mr-2 rounded"
-        />
-        <button on:click={connectToPeer} class="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition duration-200">
-          Connect to Opponent
-        </button>
+          </div>
+          
+          <div class="text-sm text-gray-400 mt-4">
+            <p><i class="fas fa-info-circle mr-1"></i> Share your connection code with an opponent or scan their QR code to begin.</p>
+          </div>
+        </div>
       </div>
     {:else if gameState === 'playing' || gameState === 'gameover'}
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div class="space-y-4" class:transitioning={roundTransitionActive}>
-          <DiceTray {dice} {diceCount} label="Your Dice" />  
-          <h2 class="text-lg sm:text-xl font-bold mb-2">Current Bid:</h2>
-          <p class="text-base sm:text-lg mb-4">{bid.quantity} x {bid.value}'s</p>
-          
-          <!-- Add previous bid display -->
-          {#if previousBid && previousBid.quantity && previousBid.value}
-            <h3 class="text-sm sm:text-base font-semibold text-gray-400">Previous Bid:</h3>
-            <p class="text-sm sm:text-base text-gray-400 mb-4">{previousBid.quantity} x {previousBid.value}'s</p>
-          {/if}
-  
-          {#if gameState === 'playing'}
-            <div class="mb-4 text-base sm:text-lg font-bold {isMyTurn ? 'text-green-600' : 'text-red-600'}">
-              {isMyTurn ? "It's your turn!" : `Waiting for ${opponentName}'s move...`}
+        <div class="bg-gray-800 p-5 rounded-lg shadow-lg border border-gray-700 space-y-4" class:transitioning={roundTransitionActive}>
+          <!-- Game information header -->
+          <div class="flex justify-between items-center mb-2">
+            <div class="flex items-center">
+              <span class="bg-gray-700 text-white py-1 px-3 rounded-full text-sm font-medium">
+                Game with {opponentName}
+              </span>
             </div>
+            
+            <!-- Turn indicator -->
+            {#if gameState === 'playing'}
+              <div class="flex items-center">
+                <span class="relative flex h-3 w-3 mr-2">
+                  <span class="{isMyTurn ? 'animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75' : 'animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75'}"></span>
+                  <span class="{isMyTurn ? 'relative inline-flex rounded-full h-3 w-3 bg-green-500' : 'relative inline-flex rounded-full h-3 w-3 bg-red-500'}"></span>
+                </span>
+                <span class="text-sm font-medium {isMyTurn ? 'text-green-400' : 'text-red-400'}">
+                  {isMyTurn ? "Your Turn" : "Opponent's Turn"}
+                </span>
+              </div>
+            {/if}
+          </div>
+          
+          <!-- Dice Tray with animation -->
+          <div class="relative transform hover:scale-105 transition-transform duration-200">
+            <DiceTray {dice} {diceCount} label="Your Dice" />
+          </div>
+          
+          <!-- Current and previous bids -->
+          <div class="bg-gray-900 p-4 rounded-lg">
+            <h2 class="text-lg sm:text-xl font-bold mb-2 flex items-center">
+              <i class="fas fa-gavel mr-2 text-yellow-400"></i> Current Bid:
+            </h2>
+            <p class="text-base sm:text-xl mb-4 font-bold">
+              {#if bid.quantity && bid.value}
+                <span class="text-yellow-300">{bid.quantity}</span> × 
+                <span class="text-white">
+                  {#if bid.value === 1}<i class="fas fa-dice-one mr-1 text-blue-300"></i>{/if}
+                  {#if bid.value === 2}<i class="fas fa-dice-two mr-1 text-blue-300"></i>{/if}
+                  {#if bid.value === 3}<i class="fas fa-dice-three mr-1 text-blue-300"></i>{/if}
+                  {#if bid.value === 4}<i class="fas fa-dice-four mr-1 text-blue-300"></i>{/if}
+                  {#if bid.value === 5}<i class="fas fa-dice-five mr-1 text-blue-300"></i>{/if}
+                  {#if bid.value === 6}<i class="fas fa-dice-six mr-1 text-blue-300"></i>{/if}
+                  {bid.value}'s
+                </span>
+              {:else}
+                <span class="text-gray-400">No bids yet</span>
+              {/if}
+            </p>
+            
+            <!-- Previous bid display with improved styling -->
+            {#if previousBid && previousBid.quantity && previousBid.value}
+              <div class="border-t border-gray-700 pt-3 mt-3">
+                <h3 class="text-sm sm:text-base font-semibold text-gray-400 flex items-center">
+                  <i class="fas fa-history mr-1"></i> Previous Bid:
+                </h3>
+                <p class="text-sm sm:text-base text-gray-400 mb-1">
+                  {previousBid.quantity} × 
+                  {#if previousBid.value === 1}<i class="fas fa-dice-one mr-1"></i>{/if}
+                  {#if previousBid.value === 2}<i class="fas fa-dice-two mr-1"></i>{/if}
+                  {#if previousBid.value === 3}<i class="fas fa-dice-three mr-1"></i>{/if}
+                  {#if previousBid.value === 4}<i class="fas fa-dice-four mr-1"></i>{/if}
+                  {#if previousBid.value === 5}<i class="fas fa-dice-five mr-1"></i>{/if}
+                  {#if previousBid.value === 6}<i class="fas fa-dice-six mr-1"></i>{/if}
+                  {previousBid.value}'s
+                </p>
+              </div>
+            {/if}
+          </div>
+          
+          {#if gameState === 'playing'}
+            <div class="mb-4 text-base sm:text-lg font-bold text-center p-2 rounded {isMyTurn ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'}">
+              {isMyTurn ? "It's your turn to make a move!" : `Waiting for ${opponentName} to make a move...`}
+            </div>
+            
             <BidControls 
               bind:bid 
               {makeBid} 
@@ -494,13 +604,30 @@
               {validateBid}
             />
           {/if}
-  
-          <p class="text-base sm:text-lg font-semibold">{message}</p>
-  
+          
+          <!-- Game message with animation -->
+          {#if message}
+            <div class="bg-blue-900/30 border border-blue-700/50 p-3 rounded-lg shadow-inner">
+              <p class="text-base sm:text-lg font-medium text-blue-200">{message}</p>
+            </div>
+          {/if}
         </div>
   
-        <div>
-          <h2 class="text-lg sm:text-xl font-bold mb-2 text-center">Opponent's Dice: {opponentDiceCount}</h2>
+        <div class="space-y-4">
+          <div class="bg-gray-900/50 p-3 rounded-lg flex items-center justify-between border-b border-gray-700">
+            <h2 class="text-lg sm:text-xl font-bold flex items-center">
+              <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-gray-800 mr-2">
+                <i class="fas fa-user text-blue-400"></i>
+              </span>
+              {opponentName}
+            </h2>
+            <div class="flex items-center gap-2">
+              <span class="bg-gray-800 text-white py-1 px-3 rounded-full text-sm font-medium flex items-center">
+                <i class="fas fa-dice mr-1 text-yellow-400"></i> {opponentDiceCount}
+              </span>
+            </div>
+          </div>
+          
           <Chat 
             {chatMessages} 
             bind:chatInput 
@@ -524,13 +651,46 @@
     :global(body) {
         background-color: #1a1f2e;
         color: #e2e8f0;
+        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+        min-height: 100vh;
     }
 
+    /* Improve default focus styles for accessibility */
+    :global(button:focus), :global(a:focus), :global(input:focus) {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+    }
+
+    /* Nicer scrollbars */
+    :global(::-webkit-scrollbar) {
+        width: 8px;
+        height: 8px;
+    }
+
+    :global(::-webkit-scrollbar-track) {
+        background: #2d3748;
+        border-radius: 8px;
+    }
+
+    :global(::-webkit-scrollbar-thumb) {
+        background: #4a5568;
+        border-radius: 8px;
+    }
+
+    :global(::-webkit-scrollbar-thumb:hover) {
+        background: #718096;
+    }
+
+    /* Tooltip indicator styles */
     .copied-indicator {
         position: absolute;
-        top: -20px;
+        top: -30px;
         right: 0;
         animation: fadeInOut 1s ease-in-out;
+        padding: 4px 8px;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        font-size: 12px;
     }
 
     @keyframes fadeInOut {
@@ -554,11 +714,53 @@
 
     @keyframes pulse {
         0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    /* Page transition effects */
+    h1 {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    h1::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(to right, #3b82f6, #10b981, #3b82f6);
+        transform: scaleX(0);
+        transform-origin: left;
+        animation: underline-animation 2s ease-in-out forwards;
+    }
+    
+    @keyframes underline-animation {
+        to { transform: scaleX(1); }
     }
     
     .transitioning {
-        opacity: 0.6;
-        transition: opacity 0.3s ease;
+        opacity: 0.4;
+        filter: blur(2px);
+        transform: scale(0.98);
+        transition: opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease;
+        pointer-events: none;
+    }
+
+    /* Make input fields more intuitive */
+    :global(input[type="range"]::-webkit-slider-thumb) {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #4ade80;
+        cursor: pointer;
+        box-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
+    }
+
+    :global(input[type="range"]:focus::-webkit-slider-thumb) {
+        box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.5);
     }
   </style>

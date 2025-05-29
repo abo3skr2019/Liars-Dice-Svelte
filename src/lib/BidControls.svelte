@@ -56,7 +56,7 @@ $: bidRequirementText = previousBid && previousBid.quantity && previousBid.value
       <div class="flex flex-col w-full max-w-[340px] space-y-4">
         <div class="w-full">
           <div class="flex justify-between mb-1">
-            <label for="quantity">Number of Dice: {bid.quantity || 1}</label>
+            <label for="quantity">Number of Dice: <span class="font-bold text-green-400">{bid.quantity || 1}</span></label>
             <span class="text-sm text-gray-400">Max: {totalDice}</span>
           </div>
           <input
@@ -66,12 +66,27 @@ $: bidRequirementText = previousBid && previousBid.quantity && previousBid.value
             max={totalDice}
             bind:value={bid.quantity}
             disabled={previousBid && previousBid.value === 6 && previousBid.quantity >= totalDice}
-            class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500 "
+            class="w-full h-4 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500"
           />
         </div>
         <div class="w-full">
           <div class="flex justify-between mb-1">
-            <label for="value">Dice Face: {bid.value || 1}</label>
+            <label for="value">Dice Face: <span class="font-bold text-green-400">{bid.value || 1}</span></label>
+            <span class="text-sm">
+              {#if bid.value === 1}
+                <i class="fas fa-dice-one text-green-400"></i>
+              {:else if bid.value === 2}
+                <i class="fas fa-dice-two text-green-400"></i>
+              {:else if bid.value === 3}
+                <i class="fas fa-dice-three text-green-400"></i>
+              {:else if bid.value === 4}
+                <i class="fas fa-dice-four text-green-400"></i>
+              {:else if bid.value === 5}
+                <i class="fas fa-dice-five text-green-400"></i>
+              {:else if bid.value === 6}
+                <i class="fas fa-dice-six text-green-400"></i>
+              {/if}
+            </span>
           </div>
           <input
             id="value"
@@ -81,7 +96,7 @@ $: bidRequirementText = previousBid && previousBid.quantity && previousBid.value
             bind:value={bid.value}
             on:change={validateBidValue}
             disabled={previousBid && previousBid.value === 6 && previousBid.quantity >= totalDice}
-            class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500 "
+            class="w-full h-4 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500"
           />
         </div>
       </div>
@@ -90,19 +105,19 @@ $: bidRequirementText = previousBid && previousBid.quantity && previousBid.value
       <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full max-w-[340px]">
         <button 
           on:click={makeBid}
-          class="w-full {isValidBid ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500 cursor-not-allowed'} text-white p-2 rounded transition duration-200"
+          class="w-full {isValidBid ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500 cursor-not-allowed'} text-white p-3 rounded-lg font-medium transition duration-200 flex items-center justify-center gap-2 shadow-md"
           disabled={!isValidBid || (previousBid.value === 6 && previousBid.quantity >= totalDice)}
           title={!isValidBid ? 'This bid is not higher than the previous bid' : 'Make this bid'}
         >
-          Make Bid
+          <i class="fas fa-dice"></i> Make Bid
         </button>
         <button 
           on:click={challenge}
-          class="w-full bg-red-500 hover:bg-red-600 text-white p-2 rounded transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="w-full bg-red-500 hover:bg-red-600 text-white p-3 rounded-lg font-medium transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
           disabled={!previousBid || !previousBid.quantity}
           title={!previousBid && !previousBid.quantity ? 'Cannot challenge when there is no previous bid' : 'Challenge the last bid'}
         >
-          Challenge
+          <i class="fas fa-flag"></i> Challenge
         </button>
       </div>
     </div>
